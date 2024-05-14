@@ -1,4 +1,4 @@
-FROM golang:1.21.5-alpine3.18 AS build
+FROM golang:1.22.2-alpine3.18 AS build
 
 RUN apk --no-cache add gcc g++ make git
 
@@ -20,7 +20,7 @@ WORKDIR /go/bin
 
 COPY --from=build /go/src/app/bin /go/bin
 COPY --from=build /go/src/app/.env /go/bin/
-COPY --from=build /go/src/app/data /go/bin/data
+COPY --from=build /go/src/app/sql /go/bin/sql
 COPY --from=build /go/src/app/static /go/bin/static
 
 EXPOSE 8099

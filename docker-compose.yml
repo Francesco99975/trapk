@@ -1,8 +1,25 @@
 version: "3.7"
 
 services:
+  trapkdb:
+    image: postgres:15.3-alpine
+    container_name: trapkdb
+    restart: unless-stopped
+    labels:
+      - traefik.enable=false
+    networks:
+      - trapknet
+    env_file:
+      - dbp.env
+    ports:
+      - "5439:5432"
+    volumes:
+      - trapkpgdata:/var/lib/postgresql/data
+      - trapkpgconf:/etc/postgresql
+      - trapkpglog:/var/log/postgresql
   trapk:
     container_name: trapk
+    depends_on: [trapkdb]
     image: trapk
     labels:
       - traefik.http.routers.trapk.rule=Host(`trapk.urx.ink`)
@@ -17,23 +34,6 @@ services:
       - proxy
     ports:
       - 8099:8099
-  trapkdb:
-    image: postgres:15.3-alpine
-    container_name: trapkdb
-    restart: unless-stopped
-    labels:
-      - traefik.enable=false
-    networks:
-      - trapknet
-    env_file:
-      - dbp.env
-    ports:
-      - "5439:5432"
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
-      - trapkpgdata:/var/lib/postgresql/data
-      - trapkpgconf:/etc/postgresql
-      - trapkpglog:/var/log/postgresql
 
 networks:
   proxy:

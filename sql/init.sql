@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS apps (
   id TEXT NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT NOW(),
   updated TIMESTAMP NOT NULL DEFAULT NOW(),
-  PRIMARY KEY(appid)
+  PRIMARY KEY(id)
 );
 
 SELECT apply_update_trigger('apps');
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS devices (
   ip TEXT NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT NOW(),
   updated TIMESTAMP NOT NULL DEFAULT NOW(),
-  PRIMARY KEY(deviceid)
+  PRIMARY KEY(id)
 );
 
 SELECT apply_update_trigger('devices');
