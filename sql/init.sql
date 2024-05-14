@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS apps_devices (
   appid TEXT NOT NULL,
   deviceid TEXT NOT NULL,
   usage INT NOT NULL DEFAULT 0,
-  version_TEXT TEXT NOT NULL,
+  ver TEXT NOT NULL,
   CONSTRAINT fk_ad
   FOREIGN KEY (appid)
   REFERENCES apps(id),
