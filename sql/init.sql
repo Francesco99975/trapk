@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS apps_devices (
   deviceid TEXT NOT NULL,
   usage INT NOT NULL DEFAULT 0,
   ver TEXT NOT NULL,
+  created TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated TIMESTAMP NOT NULL DEFAULT NOW(),
   CONSTRAINT fk_ad
   FOREIGN KEY (appid)
   REFERENCES apps(id),
@@ -60,3 +62,5 @@ CREATE TABLE IF NOT EXISTS apps_devices (
   REFERENCES devices(id),
   PRIMARY KEY(appid, deviceid)
 );
+
+SELECT apply_update_trigger('apps_devices');
