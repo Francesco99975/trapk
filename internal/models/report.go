@@ -30,16 +30,26 @@ func CreateReport(payload Report, ip string) error {
 
 	var existsRelation bool
 
-	existRealtionQuery := `SELECT EXISTS(SELECT 1 FROM apps_devices WHERE appid = $1 AND deviceid = $2 AND ver = $3)`
+	existRealtionQuery := `SELECT EXISTS(SELECT 1 FROM apps_devices WHERE appid = $1 AND deviceid = $2)`
 
-	if err := db.Get(&existsRelation, existRealtionQuery, payload.AppId, payload.DeviceId, payload.AppVersion); err != nil {
+	if err := db.Get(&existsRelation, existRealtionQuery, payload.AppId, payload.DeviceId); err != nil {
 		return err
 	}
 
 	if existsRelation {
-		statementAppLinkUpdate := `UPDATE apps_devices SET usage = usage + 1 WHERE appid = $1 AND deviceid = $2 AND ver = $3`
 
-		if _, err := tx.Exec(statementAppLinkUpdate, payload.AppId, payload.DeviceId, payload.AppVersion); err != nil {
+		statementAppLinkUpdate := `UPDATE apps_devices SET usage = usage + 1 WHERE appid = $1 AND deviceid = $2`
+
+		if _, err := tx.Exec(statementAppLinkUpdate, payload.AppId, payload.DeviceId); err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
+			return err
+		}
+
+		statementAppLinkUpdateVersion := `UPDATE apps_devices SET ver = $1 WHERE appid = $2 AND deviceid = $3`
+
+		if _, err := tx.Exec(statementAppLinkUpdateVersion, payload.AppVersion, payload.AppId, payload.DeviceId); err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
 				return rollbackErr
 			}
